@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포인트 관리</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        div {
+            margin-bottom: 20px;
+        }
+        input, button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>포인트 관리</h1>
+
+    <div>
+        <h2>포인트 확인</h2>
+        <input type="text" id="checkUsername" placeholder="사용자 이름">
+        <button onclick="checkPoints()">확인하기</button>
+        <p id="checkResult"></p>
+    </div>
+
+    <div>
+        <h2>포인트 충전</h2>
+        <input type="text" id="addUsername" placeholder="사용자 이름">
+        <input type="number" id="addAmount" placeholder="충전할 포인트">
+        <button onclick="addPoints()">충전하기</button>
+        <p id="addResult"></p>
+    </div>
+
+    <div>
+        <h2>포인트 차감</h2>
+        <input type="text" id="deductUsername" placeholder="사용자 이름">
+        <input type="number" id="deductAmount" placeholder="차감할 포인트">
+        <button onclick="deductPoints()">차감하기</button>
+        <p id="deductResult"></p>
+    </div>
+
+    <script>
+        // 서버와 통신하여 사용자 정보를 가져오는 API URL
+        const apiBaseUrl = 'https://your-server-api-url.com'; // 실제 API URL로 대체
+
+        // 포인트 확인 함수
+        async function checkPoints() {
+            const username = document.getElementById('checkUsername').value;
+            const resultElement = document.getElementById('checkResult');
+
+            if (!username) {
+                resultElement.innerText = '사용자 이름을 입력하세요.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/getPoints?username=${username}`);
+                const data = await response.json();
+                resultElement.innerText = data.success ? `현재 포인트: ${data.points}` : '사용자를 찾을 수 없습니다.';
+            } catch (error) {
+                resultElement.innerText = '서버와의 통신에 문제가 발생했습니다.';
+            }
+        }
+
+        // 포인트 충전 함수
+        async function addPoints() {
+            const username = document.getElementById('addUsername').value;
+            const amount = parseInt(document.getElementById('addAmount').value, 10);
+            const resultElement = document.getElementById('addResult');
+
+            if (!username || isNaN(amount)) {
+                resultElement.innerText = '유효한 사용자 이름과 금액을 입력하세요.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/addPoints`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, amount }),
+                });
+                const data = await response.json();
+                resultElement.innerText = data.success ? `포인트가 충전되었습니다. 현재 포인트: ${data.points}` : '문제가 발생했습니다.';
+            } catch (error) {
+                resultElement.innerText = '서버와의 통신에 문제가 발생했습니다.';
+            }
+        }
+
+        // 포인트 차감 함수
+        async function deductPoints() {
+            const username = document.getElementById('deductUsername').value;
+            const amount = parseInt(document.getElementById('deductAmount').value, 10);
+            const resultElement = document.getElementById('deductResult');
+
+            if (!username || isNaN(amount)) {
+                resultElement.innerText = '유효한 사용자 이름과 금액을 입력하세요.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/deductPoints`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, amount }),
+                });
+                const data = await response.json();
+                resultElement.innerText = data.success ? `포인트가 차감되었습니다. 현재 포인트: ${data.points}` : '문제가 발생했습니다.';
+            } catch (error) {
+                resultElement.innerText = '서버와의 통신에 문제가 발생했습니다.';
+            }
+        }
+    </script>
+</body>
+</html>
