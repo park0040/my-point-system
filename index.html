@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포인트 관리</title>
+  <script>
+    async function addPoints() {
+      const username = document.getElementById('username').value;
+      const points = parseInt(document.getElementById('points').value);
+
+      try {
+        const response = await fetch('http://localhost:3000/api/addPoints', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, points })
+        });
+
+        const result = await response.json();
+        alert(result.message);
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    }
+
+    async function deductPoints() {
+      const username = document.getElementById('username').value;
+      const points = parseInt(document.getElementById('points').value);
+
+      try {
+        const response = await fetch('http://localhost:3000/api/deductPoints', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, points })
+        });
+
+        const result = await response.json();
+        alert(result.message);
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>포인트 관리</h1>
+  <input type="text" id="username" placeholder="Username" />
+  <input type="number" id="points" placeholder="Points" />
+  <button onclick="addPoints()">포인트 충전</button>
+  <button onclick="deductPoints()">포인트 차감</button>
+</body>
+</html>
